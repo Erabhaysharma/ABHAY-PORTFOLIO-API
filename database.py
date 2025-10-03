@@ -1,55 +1,53 @@
-import sqlite3
-from contextlib import contextmanager
+import os
 import json
+from sqlalchemy import create_engine, text
+from sqlalchemy.orm import sessionmaker
 
-DB_NAME = "data.db"
+# Pick up DATABASE_URL from Render env vars
+DATABASE_URL = os.getenv("postgresql://abhayportfolio_user:EV60UHaABYZ3ovmDBFhKcRS4zGn0lreu@dpg-d3fsqkjipnbc73bdnvn0-a/abhayportfolio")
 
-@contextmanager
-def get_db():
-    """Context manager for SQLite connection"""
-    conn = sqlite3.connect(DB_NAME)
-    conn.row_factory = sqlite3.Row  # rows behave like dicts
-    try:
-        yield conn
-    finally:
-        conn.close()
+# Create SQLAlchemy engine
+engine = create_engine(DATABASE_URL)
+
+# Session factory
+SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 
 
-# ---------- Optional helper functions for each table ----------
+# ---------- Helper functions ----------
 
 def fetch_admins():
-    with get_db() as conn:
-        cursor = conn.cursor()
-        cursor.execute("SELECT * FROM admin")
-        return [dict(row) for row in cursor.fetchall()]
+    with engine.connect() as conn:
+        result = conn.execute(text("SELECT * FROM admin"))
+        return [dict(row._mapping) for row in result]
+
 
 def fetch_experience():
-    with get_db() as conn:
-        cursor = conn.cursor()
-        cursor.execute("SELECT * FROM experience")
-        return [dict(row) for row in cursor.fetchall()]
+    with engine.connect() as conn:
+        result = conn.execute(text("SELECT * FROM experience"))
+        return [dict(row._mapping) for row in result]
+
 
 def fetch_skills():
-    with get_db() as conn:
-        cursor = conn.cursor()
-        cursor.execute("SELECT * FROM skills")
-        return [dict(row) for row in cursor.fetchall()]
+    with engine.connect() as conn:
+        result = conn.execute(text("SELECT * FROM skills"))
+        return [dict(row._mapping) for row in result]
+
 
 def fetch_projects():
-    with get_db() as conn:
-        cursor = conn.cursor()
-        cursor.execute("SELECT * FROM projects")
-        rows = cursor.fetchall()
-        # Convert stack JSON string back to list
+    with engine.connect() as conn:
+        result = conn.execute(text("SELECT * FROM projects"))
+        rows = result.fetchall()
         projects = []
         for row in rows:
-            project = dict(row)
-            project["stack"] = json.loads(project["stack"])
+            project = dict(row._mapping)
+            # Convert stack JSON string back to list
+            if project.get("stack"):
+                project["stack"] = json.loads(project["stack"])
             projects.append(project)
         return projects
 
+
 def fetch_research():
-    with get_db() as conn:
-        cursor = conn.cursor()
-        cursor.execute("SELECT * FROM research")
-        return [dict(row) for row in cursor.fetchall()]
+    with engine.connect() as conn:
+        result = conn.execute(text("SELECT * FROM research"))
+        return [dict(row._mapping) for row in result]
