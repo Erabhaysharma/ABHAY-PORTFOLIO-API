@@ -4,7 +4,7 @@ from sqlalchemy import create_engine, text
 from sqlalchemy.orm import sessionmaker
 
 # Pick up DATABASE_URL from Render env vars
-DATABASE_URL = os.getenv("DATABASE_URL")  # <-- use the env var name, not the URL itself
+DATABASE_URL = os.getenv("DATABSE_URL")  # <-- use the env var name, not the URL itself
 
 if not DATABASE_URL:
     raise ValueError("DATABASE_URL environment variable is not set!")
