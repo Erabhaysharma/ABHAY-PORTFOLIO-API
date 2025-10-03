@@ -87,7 +87,7 @@ def delete_from_table(table_name, pk_value, pk_field):
 # -------------------- FastAPI App --------------------
 app = FastAPI()
 
-origins = ["http://localhost:5173"]  # add your frontend URL
+origins = ["https://abhay-portfolio-etuw.vercel.app"]  # add your frontend URL
 app.add_middleware(
     CORSMiddleware,
     allow_origins=origins,

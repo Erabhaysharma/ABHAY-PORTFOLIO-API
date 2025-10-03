@@ -13,14 +13,14 @@ for t in tables:
     print(" -", t[0])
 
 # Show schema of skills table
-print("\n📝 Schema of skills:")
-cursor.execute("PRAGMA table_info(skills);")
+print("\n📝 Schema of admin:")
+cursor.execute("PRAGMA table_info(admin);")
 for col in cursor.fetchall():
     print(col)
 
 # Optional: show first 5 rows
-print("\n📊 First 5 rows in skills:")
-cursor.execute("SELECT * FROM skills LIMIT 10;")
+print("\n📊 First 5 rows in admin:")
+cursor.execute("SELECT * FROM admin LIMIT 2;")
 rows = cursor.fetchall()
 for row in rows:
     print(row)
