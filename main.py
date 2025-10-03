@@ -11,7 +11,7 @@ from sqlalchemy import create_engine, Column, String, Integer, JSON
 from sqlalchemy.orm import declarative_base, sessionmaker, Session
 
 # -------------------- Database --------------------
-DATABASE_URL = os.getenv("postgresql://abhayportfolio_user:EV60UHaABYZ3ovmDBFhKcRS4zGn0lreu@dpg-d3fsqkjipnbc73bdnvn0-a/abhayportfolio")  # Render Postgres URL
+DATABASE_URL = os.getenv("DATABASE_URL")  # Render Postgres URL
 
 engine = create_engine(DATABASE_URL, echo=True, future=True)
 SessionLocal = sessionmaker(bind=engine, autoflush=False, autocommit=False)
