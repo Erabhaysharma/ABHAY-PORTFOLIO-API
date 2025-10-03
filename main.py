@@ -139,13 +139,11 @@ def fetch_admin():
     else:
         return {"username": "", "password": ""}
 
-admin_data = fetch_admin()
-
-PasswordStr = Annotated[str, str]  # simplified
-
 class LoginRequest(BaseModel):
     username: EmailStr
-    password: PasswordStr
+    password: str   # use plain str, not Annotated
+
+
 
 # -------------------- Endpoints --------------------
 # Projects CRUD
@@ -369,4 +367,4 @@ async def reset_password(req: ResetPasswordRequest):
     # cleanup OTP
     del OTP_STORE[req.email]
 
-    return {"status": "success", "message": "Password reset successful"}
+    return {"status": "success", "message": "Password reset successful"}  

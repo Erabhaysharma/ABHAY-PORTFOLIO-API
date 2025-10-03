@@ -1,0 +1,38 @@
+[
+  {
+    "title": "AI-Driven Crop Yield Prediction: Enhancing Agricultural Forecasting with Machine Learning",
+    "short_description": "A machine learning-based model for predicting crop yield by integrating weather patterns, soil health, and satellite imagery data.",
+    "author": "Abhay Kumar Sharma",
+    "link": "https://example.com/research/crop-yield-prediction"
+  },
+  {
+    "title": "Real-Time Intraday Stock Prediction using Hybrid Deep Learning Models",
+    "short_description": "A hybrid LSTM and Transformer-based framework for forecasting intraday stock prices with enhanced accuracy and reduced latency.",
+    "author": "Abhay Kumar Sharma",
+    "link": "https://example.com/research/intraday-stock-prediction"
+  },
+  {
+    "title": "Personalized Style Recommendation System: AI-Powered Fashion Insights",
+    "short_description": "An AI recommendation engine that suggests outfits and fashion styles based on user-specific features like body type, skin tone, and preferences.",
+    "author": "Abhay Kumar Sharma",
+    "link": "https://example.com/research/style-recommendation"
+  },
+  {
+    "title": "Personalized Style Recommendation System: AI-Powered Fashion Insights",
+    "short_description": "An AI recommendation engine that suggests outfits and fashion styles based on user-specific features like body type, skin tone, and preferences.",
+    "author": "Abhay Kumar Sharma",
+    "link": "https://example.com/research/style-recommendation"
+  },
+  {
+    "title": "AI-Powered Mental Health Chatbot: Enhancing Emotional Well-being through Conversational Agents",
+    "short_description": "A conversational AI chatbot designed to provide mental health support and resources, utilizing natural language processing and sentiment analysis.",
+    "author": "Abhay Kumar Sharma",
+    "link": "https://example.com/research/mental-health-chatbot"
+  },
+  {
+    "title": "AI-Powered Mental Health Chatbot: Enhancing Emotional Well-being through Conversational Agents",
+    "short_description": "A conversational AI chatbot designed to provide mental health support and resources, utilizing natural language processing and sentiment analysis.",
+    "author": "Abhay Kumar Sharma",
+    "link": "https://example.com/research/mental-health-chatbot"
+  }
+]

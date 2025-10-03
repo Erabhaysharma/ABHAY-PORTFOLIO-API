@@ -1,0 +1,46 @@
+{
+  "experience": [
+    {
+      "role": "10th Grade",
+      "company": "Maa Bhagwati Niketan Public School",
+      "type": "Academic",
+      "duration": "Mar 2019 - Apr 2020"
+    },
+    {
+      "role": "Secondary Education (Non-Medical)",
+      "company": "Government Senior Secondary School",
+      "type": "Academic",
+      "duration": "2020 - 2022"
+    },
+    {
+      "role": "B.tech in CSE(AIML)",
+      "company": "Kurukshetra University Kurukshetra",
+      "type": "Academic",
+      "duration": "2022 - 2026"
+    },
+    {
+      "role": "Junior Data Analyst",
+      "company": "TechVision Analytics",
+      "type": "Professional",
+      "duration": "Jan 2023 - Dec 2023"
+    },
+    {
+      "role": "AI Research Intern",
+      "company": "NeuralNet Labs",
+      "type": "Professional",
+      "duration": "Jan 2024 - Jun 2024"
+    },
+    {
+      "role": "Machine Learning Engineer",
+      "company": "InnoData Systems",
+      "type": "Professional",
+      "duration": "Jul 2024 - Jan 2025"
+    },
+    {
+      "role": "intern",
+      "company": "ddd",
+      "type": "Professional",
+      "duration": "xxb "
+    }
+  ]
+}

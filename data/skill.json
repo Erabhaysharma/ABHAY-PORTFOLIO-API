@@ -1,0 +1,118 @@
+[
+  {
+    "name": "Data Science & AI",
+    "icon": "FaBrain",
+    "skills": [
+      {
+        "name": "Computer Vision",
+        "percent": 50
+      },
+      {
+        "name": "Generative",
+        "percent": 40
+      },
+      {
+        "name": "NLP",
+        "percent": 60
+      },
+      {
+        "name": "Machine Learning",
+        "percent": 85
+      },
+      {
+        "name": "Deep Learning",
+        "percent": 70
+      },
+      {
+        "name": "Data Science",
+        "percent": 60
+      }
+    ]
+  },
+  {
+    "name": "Programming",
+    "icon": "FaCode",
+    "skills": [
+      {
+        "name": "Python",
+        "percent": 95
+      },
+      {
+        "name": "JavaScript",
+        "percent": 90
+      },
+      {
+        "name": "C++",
+        "percent": 80
+      },
+      {
+        "name": "SQL",
+        "percent": 85
+      }
+    ]
+  },
+  {
+    "name": "Front End",
+    "icon": "FaPalette",
+    "skills": [
+      {
+        "name": "React",
+        "percent": 90
+      },
+      {
+        "name": "HTML/CSS",
+        "percent": 95
+      },
+      {
+        "name": "Vite",
+        "percent": 85
+      },
+      {
+        "name": "UI/UX Design",
+        "percent": 80
+      }
+    ]
+  },
+  {
+    "name": "Back End",
+    "icon": "FaServer",
+    "skills": [
+      {
+        "name": "Node.js",
+        "percent": 85
+      },
+      {
+        "name": "Firebase",
+        "percent": 75
+      },
+      {
+        "name": "REST APIs",
+        "percent": 90
+      },
+      {
+        "name": "MongoDB",
+        "percent": 80
+      }
+    ]
+  },
+  {
+    "name": "Miscellaneous",
+    "icon": "FaCogs",
+    "skills": [
+      {
+        "name": "Git & GitHub",
+        "percent": 90
+      }
+    ]
+  },
+  {
+    "name": "Cloud",
+    "icon": "facloud",
+    "skills": [
+      {
+        "name": "AWS",
+        "percent": 50
+      }
+    ]
+  }
+]
