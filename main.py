@@ -3,17 +3,16 @@ from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel, EmailStr, field_validator
 from typing import List, Annotated
 import re
-import json
 import smtplib
 import random
 import os
-from sqlalchemy import create_engine, Column, String, Integer, JSON
+from sqlalchemy import create_engine, Column, String, JSON
 from sqlalchemy.orm import declarative_base, sessionmaker, Session
 
 # -------------------- Database --------------------
-DATABASE_URL = os.getenv("DATABASE_URL")  # Render Postgres URL
-print("DATABASE_URL =", os.getenv("DATABASE_URL"))
-
+DATABASE_URL = os.getenv("DATABASE_URL")
+if not DATABASE_URL:
+    raise RuntimeError("❌ DATABASE_URL environment variable not set")
 
 engine = create_engine(DATABASE_URL, echo=True, future=True)
 SessionLocal = sessionmaker(bind=engine, autoflush=False, autocommit=False)
@@ -34,7 +33,7 @@ class SkillModel(Base):
     __tablename__ = "skills"
     name = Column(String, primary_key=True)
     icon = Column(String)
-    skills = Column(JSON)  # list of skill items
+    skills = Column(JSON)
 
 class ExperienceModel(Base):
     __tablename__ = "experience"
@@ -55,7 +54,7 @@ class AdminModel(Base):
     username = Column(String, primary_key=True)
     password = Column(String)
 
-# Create tables if not exist
+# Create tables
 Base.metadata.create_all(bind=engine)
 
 # -------------------- Dependency --------------------
@@ -69,7 +68,7 @@ def get_db():
 # -------------------- FastAPI App --------------------
 app = FastAPI()
 
-origins = ["https://abhay-portfolio-etuw.vercel.app/"]  # frontend URL
+origins = ["https://abhay-portfolio-etuw.vercel.app/"]
 app.add_middleware(
     CORSMiddleware,
     allow_origins=origins,
@@ -145,14 +144,15 @@ class ResetPasswordRequest(BaseModel):
             raise ValueError("Password must contain at least 1 special character")
         return v
 
-# -------------------- Admin Data --------------------
+# -------------------- Helper Functions --------------------
+OTP_STORE = {}
+
 def fetch_admin(db: Session):
     admin = db.query(AdminModel).first()
     if admin:
         return {"username": admin.username, "password": admin.password}
     return {"username": "", "password": ""}
 
-# -------------------- Helper Functions --------------------
 def send_otp_email(to_email: str, otp: str):
     sender_email = "abhaysharma75547@gmail.com"
     sender_password = "riac vdwm ljfj iaew"  # Gmail App password
@@ -167,8 +167,6 @@ def send_otp_email(to_email: str, otp: str):
     except Exception as e:
         print("❌ Email error:", e)
         raise HTTPException(status_code=500, detail="Failed to send OTP")
-
-OTP_STORE = {}
 
 # -------------------- CRUD Endpoints --------------------
 # Projects
@@ -210,10 +208,107 @@ def delete_project(project_id: str, db: Session = Depends(get_db)):
         db.commit()
     return {"detail": "Project deleted"}
 
-# -------------------- Skills, Experience, Research, Admin CRUD --------------------
-# You can follow same pattern: query db with SQLAlchemy, add/commit, update attributes, delete
+# Skills
+@app.get("/skills", response_model=List[SkillCategory])
+def get_skills(db: Session = Depends(get_db)):
+    rows = db.query(SkillModel).all()
+    return [SkillCategory(name=r.name, icon=r.icon, skills=[SkillItem(**s) for s in r.skills]) for r in rows]
 
-# Example for Admin login
+@app.post("/skills", response_model=SkillCategory)
+def create_skill(skill: SkillCategory, db: Session = Depends(get_db)):
+    new_skill = SkillModel(name=skill.name, icon=skill.icon, skills=[s.dict() for s in skill.skills])
+    db.add(new_skill)
+    db.commit()
+    db.refresh(new_skill)
+    return skill
+
+@app.put("/skills/{name}", response_model=SkillCategory)
+def update_skill(name: str, updated: SkillCategory, db: Session = Depends(get_db)):
+    skill = db.query(SkillModel).filter(SkillModel.name == name).first()
+    if not skill:
+        raise HTTPException(status_code=404, detail="Skill category not found")
+    skill.name = updated.name
+    skill.icon = updated.icon
+    skill.skills = [s.dict() for s in updated.skills]
+    db.commit()
+    db.refresh(skill)
+    return updated
+
+@app.delete("/skills/{name}")
+def delete_skill(name: str, db: Session = Depends(get_db)):
+    skill = db.query(SkillModel).filter(SkillModel.name == name).first()
+    if skill:
+        db.delete(skill)
+        db.commit()
+    return {"detail": "Skill category deleted"}
+
+# Experience
+@app.get("/experience", response_model=List[ExperienceItem])
+def get_experience(db: Session = Depends(get_db)):
+    rows = db.query(ExperienceModel).all()
+    return [ExperienceItem(**r.__dict__) for r in rows]
+
+@app.post("/experience", response_model=ExperienceItem)
+def create_experience(exp: ExperienceItem, db: Session = Depends(get_db)):
+    new_exp = ExperienceModel(**exp.dict())
+    db.add(new_exp)
+    db.commit()
+    db.refresh(new_exp)
+    return exp
+
+@app.put("/experience/{role}", response_model=ExperienceItem)
+def update_experience(role: str, updated: ExperienceItem, db: Session = Depends(get_db)):
+    exp = db.query(ExperienceModel).filter(ExperienceModel.role == role).first()
+    if not exp:
+        raise HTTPException(status_code=404, detail="Experience not found")
+    for k, v in updated.dict().items():
+        setattr(exp, k, v)
+    db.commit()
+    db.refresh(exp)
+    return updated
+
+@app.delete("/experience/{role}")
+def delete_experience(role: str, db: Session = Depends(get_db)):
+    exp = db.query(ExperienceModel).filter(ExperienceModel.role == role).first()
+    if exp:
+        db.delete(exp)
+        db.commit()
+    return {"detail": "Experience deleted"}
+
+# Research
+@app.get("/research", response_model=List[Research])
+def get_research(db: Session = Depends(get_db)):
+    rows = db.query(ResearchModel).all()
+    return [Research(**r.__dict__) for r in rows]
+
+@app.post("/research", response_model=Research)
+def create_research(r: Research, db: Session = Depends(get_db)):
+    new_r = ResearchModel(**r.dict())
+    db.add(new_r)
+    db.commit()
+    db.refresh(new_r)
+    return r
+
+@app.put("/research/{title}", response_model=Research)
+def update_research(title: str, updated: Research, db: Session = Depends(get_db)):
+    res = db.query(ResearchModel).filter(ResearchModel.title == title).first()
+    if not res:
+        raise HTTPException(status_code=404, detail="Research not found")
+    for k, v in updated.dict().items():
+        setattr(res, k, v)
+    db.commit()
+    db.refresh(res)
+    return updated
+
+@app.delete("/research/{title}")
+def delete_research(title: str, db: Session = Depends(get_db)):
+    res = db.query(ResearchModel).filter(ResearchModel.title == title).first()
+    if res:
+        db.delete(res)
+        db.commit()
+    return {"detail": "Research deleted"}
+
+# -------------------- Admin / OTP --------------------
 @app.post("/login")
 def login(req: LoginRequest, db: Session = Depends(get_db)):
     admin_data = fetch_admin(db)
@@ -221,7 +316,6 @@ def login(req: LoginRequest, db: Session = Depends(get_db)):
         return {"status": "success", "message": "Login successful"}
     raise HTTPException(status_code=401, detail="Invalid username or password")
 
-# Example for updating admin credentials
 @app.put("/update-admin-credential")
 def update_admin(req: UpdateCredentialsRequest, db: Session = Depends(get_db)):
     admin = db.query(AdminModel).first()
@@ -230,11 +324,11 @@ def update_admin(req: UpdateCredentialsRequest, db: Session = Depends(get_db)):
     admin.username = req.new_username
     admin.password = req.new_password
     db.commit()
+    db.refresh(admin)
     return {"status": "success", "message": "Admin credentials updated"}
 
-# OTP Endpoints
 @app.post("/forgot-password")
-async def forgot_password(req: ForgotPasswordRequest, db: Session = Depends(get_db)):
+def forgot_password(req: ForgotPasswordRequest, db: Session = Depends(get_db)):
     admin_data = fetch_admin(db)
     if req.email != admin_data["username"]:
         raise HTTPException(status_code=404, detail="Email not registered")
@@ -244,20 +338,21 @@ async def forgot_password(req: ForgotPasswordRequest, db: Session = Depends(get_
     return {"status": "success", "message": "OTP sent to email"}
 
 @app.post("/verify-otp")
-async def verify_otp(req: VerifyOtpRequest):
+def verify_otp(req: VerifyOtpRequest):
     if req.email not in OTP_STORE or OTP_STORE[req.email] != req.otp:
         raise HTTPException(status_code=400, detail="Invalid or expired OTP")
     return {"status": "success", "message": "OTP verified"}
 
 @app.post("/reset-password")
-async def reset_password(req: ResetPasswordRequest, db: Session = Depends(get_db)):
-    admin = db.query(AdminModel).first()
+def reset_password(req: ResetPasswordRequest, db: Session = Depends(get_db)):
     if req.email not in OTP_STORE or OTP_STORE[req.email] != req.otp:
         raise HTTPException(status_code=400, detail="Invalid or expired OTP")
     if req.new_password != req.confirm_password:
         raise HTTPException(status_code=400, detail="Passwords do not match")
+    admin = db.query(AdminModel).first()
     admin.username = req.email
     admin.password = req.new_password
     db.commit()
+    db.refresh(admin)
     del OTP_STORE[req.email]
     return {"status": "success", "message": "Password reset successful"}
